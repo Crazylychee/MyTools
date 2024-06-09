@@ -25,7 +25,7 @@ public class Generator {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(startDate, formatter);
 
-
+        
         for (int day = 1; day <= days; day++) {
             LocalDate nextDate = date.plusDays(day-1);
             markdownLines.add("- 第" + day + "天 - "+ nextDate.format(formatter));

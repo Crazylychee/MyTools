@@ -110,7 +110,7 @@ public class MarkdownImageConverter {
 
     public static void addTheHexoBegin(String directoryPath) {
 
-        String beginFilePath = "src/begin.txt";       // begin.txt 文件路径
+        String beginFilePath = "A:\\usr\\JavaProject\\Mytools\\src\\MarkdownImageConverter\\begin.txt";       // begin.txt 文件路径
 
         try {
             List<String> beginLines = Files.readAllLines(Paths.get(beginFilePath));
