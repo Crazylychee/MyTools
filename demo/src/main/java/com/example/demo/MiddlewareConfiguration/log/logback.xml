@@ -1,0 +1,78 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<configuration debug="false">
+    <!--定义日志文件的存储地址-->
+    <!-- TODO: 这里后面换服务器时需要更改 -->
+    <!--    <property name="LOG_HOME" value="A:\\" />-->
+    <property name="LOG_HOME" value="/var/log/newer"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%highlight(%d{yyyy-MM-dd HH:mm:ss}) | %-5level | %blue(%thread) | %blue(%file:%line) | %green(%logger) >> %cyan(%msg%n)"/>
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} | %-5level | %thread | %file:%line | %logger : %msg%n"/>
+    <property name="mysqlUsername" value="${MYSQL_USERNAME}"/>
+    <property name="mysqlQgPassword" value="${MYSQL_QGPASSWORD}"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 输出日志到数据库 -->
+    <!-- 使用自己重写后的 Appender -->
+
+
+    <appender name="DB" class="com.qgstudio.newer.log.MyDbAppender">
+        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+            <!-- 连接池 -->
+            <dataSource class="com.alibaba.druid.pool.DruidDataSource">
+                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
+                <!-- 使用变量引用用户名和密码 -->
+                <url>jdbc:mysql://39.98.41.126:3306/zhaoxin2023?serverTimezone=UTC</url>
+                <username>${mysqlUsername}</username>
+                <password>${mysqlQgPassword}</password>
+            </dataSource>
+        </connectionSource>
+    </appender>
+    <!--    <appender name="DB" class="com.qgstudio.newer.log.MyDbAppender">-->
+    <!--        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">-->
+    <!--            &lt;!&ndash; 连接池 &ndash;&gt;-->
+    <!--            <dataSource class="com.alibaba.druid.pool.DruidDataSource">-->
+    <!--                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>-->
+    <!--                &lt;!&ndash; 使用变量引用用户名和密码 &ndash;&gt;-->
+    <!--                <url>jdbc:mysql://110.41.170.45:3306/zhaoxin2023?serverTimezone=UTC</url>-->
+    <!--                <username>root</username>-->
+    <!--                <password>123456</password>-->
+    <!--            </dataSource>-->
+    <!--        </connectionSource>-->
+    <!--    </appender>-->
+
+
+    <!-- 输出到文件 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--设置策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件路径：这里%d{yyyyMMdd}表示按天分类日志-->
+            <FileNamePattern>${LOG_HOME}/%d{yyyyMMdd}.log</FileNamePattern>
+        </rollingPolicy>
+        <!--设置格式-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 提高日志等级，过滤数据库无用信息 -->
+    <logger name="org.springframework" level="ERROR" ref="DB"/>
+    <logger name="com.alibaba.druid" level="ERROR" ref="DB"/>
+    <logger name="springfox.documentation" level="ERROR" ref="DB"/>
+    <logger name="org.apache" level="ERROR" ref="DB"/>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="DB"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

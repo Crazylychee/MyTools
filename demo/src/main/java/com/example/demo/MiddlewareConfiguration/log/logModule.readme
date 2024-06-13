@@ -1,0 +1,5 @@
+mysqlUsername=root
+mysqlQgPassword=
+要记得改成自己的数据库用户名和密码
+还有包名，xml里面也有包名，切面里面也有包名
+如果不用输出日志，可以把xml里面的自定义MyDeapper注释。
